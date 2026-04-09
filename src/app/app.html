@@ -3,48 +3,37 @@
   <!-- Header -->
   <header class="app-header">
     <div class="header-inner">
-      <div class="logo-area">
-        <span class="logo-icon">☽</span>
+      <!-- <div class="logo-area"> -->
         <div>
-          <h1 class="app-title">تقوى</h1>
+          <h1 class="app-title">تقـــوى</h1>
           <p class="app-subtitle">اكتشف آيات القرآن المناسبة لمشاعرك</p>
         </div>
-      </div>
+      <!-- </div> -->
     </div>
   </header>
 
-  <!-- Main -->
-  <main class="main-content">
-
-    <!-- Search card -->
+  <!-- Hero search -->
+  <div class="hero">
+    <div class="hero-glow"></div>
     <section class="search-card" [class.has-result]="result()">
-      <label class="search-label" for="userInput">
-        كيف تشعر الآن؟ أو ما الذي يثقل كاهلك؟
-      </label>
-      <div class="search-row">
-        <textarea
-          id="userInput"
-          class="search-input"
-          dir="rtl"
-          placeholder="اكتب هنا بالعربية … مثال: أشعر بالقلق والخوف من المستقبل"
-          [(ngModel)]="userText"
-          (keydown)="onEnter($event)"
-          [disabled]="loading()"
-          rows="3"
-        ></textarea>
-      </div>
+      <label class="search-label" for="userInput">كيف تشعر الآن</label>
+      <textarea
+        id="userInput"
+        class="search-input"
+        dir="rtl"
+        placeholder="اكتب مشاعرك بالعربية … مثال: أشعر بالقلق والخوف من المستقبل"
+        [(ngModel)]="userText"
+        (keydown)="onEnter($event)"
+        [disabled]="loading()"
+        rows="3"
+      ></textarea>
       <div class="search-actions">
-        <button
-          class="btn btn-primary"
-          (click)="submit()"
-          [disabled]="!canSubmit"
-        >
+        <button class="btn btn-primary" (click)="submit()" [disabled]="!canSubmit">
           @if (loading()) {
             <span class="spinner"></span>
-            جارٍ التحليل…
+            <span>جارٍ التحليل…</span>
           } @else {
-            <span class="btn-icon">🔍</span>
-            ابحث عن آيات
+            <span>ابحث عن آيات</span>
           }
         </button>
         @if (result() || error()) {
@@ -52,12 +41,16 @@
         }
       </div>
     </section>
+  </div>
+
+  <!-- Main -->
+  <main class="main-content">
 
     <!-- Error -->
     @if (error()) {
       <div class="alert alert-error" dir="rtl">
-        <span class="alert-icon">⚠️</span>
-        {{ error() }}
+        <span class="alert-icon">⚠</span>
+        <span>{{ error() }}</span>
       </div>
     }
 
@@ -65,62 +58,64 @@
     @if (result(); as res) {
       <section class="results-section">
 
-        <!-- Emotion badge -->
-        <div class="emotion-banner" dir="rtl">
-          <div class="emotion-label-group">
-            <span class="emotion-chip emotion-chip--{{ res.emotion_class }}">
-              {{ res.matched_emotion_ar }}
-            </span>
-            <span class="emotion-chip-en">{{ res.matched_emotion_en }}</span>
-            <span class="emotion-class-badge emotion-class-badge--{{ res.emotion_class }}">
+        <!-- Emotion bar -->
+        <div class="emotion-bar" dir="rtl">
+          <div class="emotion-bar-left">
+            <span class="pill pill--{{ res.emotion_class }}">
               {{ res.emotion_class === 'positive' ? 'إيجابي' : 'سلبي' }}
             </span>
+            <span class="emotion-name">{{ res.matched_emotion_ar }}</span>
           </div>
-          <p class="results-count">
-            {{ res.top_n }} آية مختارة لك
-          </p>
+          <span class="count-label">{{ res.top_n }} آيات</span>
         </div>
 
-        <!-- Ayah cards -->
+        <!-- Cards -->
         <div class="ayahs-grid">
           @for (ayah of res.ayahs; track $index) {
             <article class="ayah-card" dir="rtl">
-              <div class="ayah-card-header">
-                <div class="surah-badge">
-                  <span class="surah-name-ar">{{ ayah.surah_name_ar }}</span>
-                  <span class="surah-name-roman">{{ ayah.surah_name_roman }}</span>
+
+              <!-- Card top row -->
+              <div class="card-top">
+                <div class="surah-info">
+                  <span class="surah-ar">{{ ayah.surah_name_ar }}</span>
+                  <span class="surah-roman">{{ ayah.surah_name_roman }}</span>
                 </div>
-                <div class="emotion-tags">
-                  <span class="tag">{{ ayah.enhanced_emotion_ar }}</span>
-                  <span class="tag tag--en">{{ ayah.enhanced_emotion_en }}</span>
-                  <span class="relevance-badge" title="درجة الملاءمة">
-                    {{ (ayah.relevance_score * 100).toFixed(0) }}%
-                  </span>
+                <div class="card-badges">
+                  <span class="badge-emotion">{{ ayah.enhanced_emotion_ar }}</span>
+                  <span class="badge-score">{{ (ayah.relevance_score * 100).toFixed(0) }}%</span>
                 </div>
               </div>
 
-              <blockquote class="ayah-arabic">
-                {{ ayah.ayah_ar }}
-              </blockquote>
+              <!-- Nav strip -->
+              <div class="nav-strip">
+                <button class="nav-btn" [disabled]="!canNavigate(ayah,$index,1)"
+                        (click)="navigate($index,1)" title="التالية">‹</button>
+                <span class="nav-pill" [class.nav-pill--context]="getView($index) !== 'current'">
+                  {{ viewLabel($index) }}
+                </span>
+                <button class="nav-btn" [disabled]="!canNavigate(ayah,$index,-1)"
+                        (click)="navigate($index,-1)" title="السابقة">›</button>
+              </div>
 
-              <p class="ayah-english">{{ ayah.ayah_en }}</p>
+              <!-- Verse -->
+              <div class="verse-wrap" [class.verse-dim]="getView($index) !== 'current'">
+                <p class="ayah-ar">{{ getDisplayed(ayah,$index).ayah_ar }}</p>
+                <p class="ayah-en">{{ getDisplayed(ayah,$index).ayah_en }}</p>
+              </div>
 
-              <div class="tafsir-section">
-                <button
-                  class="tafsir-toggle"
-                  (click)="toggleTafsir($index)"
-                  [attr.aria-expanded]="isTafsirExpanded($index)"
-                >
+              <!-- Tafsir (current verse only) -->
+              @if (getView($index) === 'current') {
+                <div class="tafsir-wrap">
+                  <button class="tafsir-btn" (click)="toggleTafsir($index)">
+                    <span class="tafsir-chevron" [class.open]="isTafsirExpanded($index)">›</span>
+                    {{ isTafsirExpanded($index) ? 'إخفاء التفسير' : 'عرض التفسير' }}
+                  </button>
                   @if (isTafsirExpanded($index)) {
-                    ▲ إخفاء التفسير
-                  } @else {
-                    ▼ عرض التفسير
+                    <p class="tafsir-body">{{ ayah.tafsir }}</p>
                   }
-                </button>
-                @if (isTafsirExpanded($index)) {
-                  <p class="tafsir-text">{{ ayah.tafsir }}</p>
-                }
-              </div>
+                </div>
+              }
+
             </article>
           }
         </div>
@@ -130,8 +125,8 @@
 
   </main>
 
-  <footer class="app-footer">
-    <p>لا يُعدَّل في نص القرآن الكريم — التصنيف بالذكاء الاصطناعي للاسترشاد فقط</p>
+  <footer class="app-footer" dir="rtl">
+    <span>لا يُعدَّل في نص القرآن الكريم — التصنيف بالذكاء الاصطناعي للاسترشاد فقط</span>
   </footer>
 
 </div>

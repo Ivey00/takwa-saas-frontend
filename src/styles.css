@@ -1,1 +1,62 @@
-/* You can add global styles to this file, and also import other style files */
+/* ─────────────────────────────────────────────
+   Global reset & design tokens
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Brand greens */
+  --g300: #6ee7b7;
+  --g400: #34d399;
+  --g500: #10b981;
+  --g600: #059669;
+  --g700: #047857;
+  --g900: #064e3b;
+
+  /* Surfaces — very dark green-tinted blacks */
+  --surface-0: #030d09;
+  --surface-1: #0a1f14;
+  --surface-2: #0f2a1b;
+  --surface-3: #152f20;
+
+  /* Glass layers */
+  --glass-bg:     rgba(10, 31, 20, 0.75);
+  --glass-border: rgba(52, 211, 153, 0.18);
+  --glass-hover:  rgba(52, 211, 153, 0.28);
+
+  /* Text hierarchy */
+  --t1: #f0fdf6;
+  --t2: #86efac;
+  --t3: #4ade80;
+  --t4: #166534;
+
+  /* Status */
+  --red:   #f87171;
+  --amber: #fbbf24;
+
+  /* Spacing / Radii */
+  --r1: 6px;
+  --r2: 12px;
+  --r3: 18px;
+  --r4: 24px;
+
+  /* Shadows */
+  --sh1: 0 1px 3px rgba(0,0,0,.5), 0 4px 16px rgba(0,0,0,.4);
+  --sh2: 0 2px 8px rgba(0,0,0,.6), 0 12px 40px rgba(0,0,0,.5);
+  --glow: 0 0 60px rgba(16,185,129,.15);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--surface-0);
+  color: var(--t1);
+  direction: rtl;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--surface-1); }
+::-webkit-scrollbar-thumb { background: var(--g700); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--g500); }
